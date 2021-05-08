@@ -19,6 +19,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.Calendar;
+
 public class SMSReceiver extends BroadcastReceiver {
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
@@ -32,7 +34,11 @@ public class SMSReceiver extends BroadcastReceiver {
                 Log.i("LOCATION", latitude + " | " + longitude);
                 fusedLocationClient.removeLocationUpdates(locationCallback);
                 SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage(senderPhoneNumber, null, "LATITUDE: " + latitude + ", LONGITUDE: " + longitude, null, null);
+                String textMessage = "NAME's Location";
+                textMessage += "\n----------------------------";
+                textMessage += "\nGoogle Maps Link: " + "http://maps.google.com/maps?f=q&q=" + latitude + "," + longitude;
+                textMessage += "\nTime: " + Calendar.getInstance().getTime();
+                smsManager.sendTextMessage(senderPhoneNumber, null, textMessage, null, null);
             }
         }
     };
