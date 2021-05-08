@@ -3,6 +3,7 @@ package com.pekoeli.smsos;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Intent;
@@ -26,10 +27,15 @@ public class MainActivity extends AppCompatActivity {
         ToggleButton toggleListener = findViewById(R.id.toggle_listener_button);
         toggleListener.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                startService(new Intent(this, SMSOSService.class));
+                //startService(new Intent(this, SMSOSService.class));
+                Intent serviceIntent = new Intent(this, SMSOSService.class);
+                serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
+                ContextCompat.startForegroundService(this, serviceIntent);
             } else {
                 // The toggle is disabled
-                stopService(new Intent(this, SMSOSService.class));
+                //stopService(new Intent(this, SMSOSService.class));
+                Intent serviceIntent = new Intent(this, SMSOSService.class);
+                stopService(serviceIntent);
             }
         });
     }
