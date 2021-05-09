@@ -1,13 +1,18 @@
 package com.pekoeli.smsos.ui;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.pekoeli.smsos.PhoneContact;
 import com.pekoeli.smsos.R;
 
@@ -16,23 +21,23 @@ import java.util.List;
 public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdapter.ViewHolder> {
 
     private List<PhoneContact> localDataSet;
+    private SharedPreferences prefs;
 
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView textView;
+        private final ImageButton deleteContactButton;
+        private final TextView nameTextView;
+        private final TextView phoneTextView;
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
-
-            textView = view.findViewById(R.id.textView);
-        }
-
-        public TextView getTextView() {
-            return textView;
+            deleteContactButton = view.findViewById(R.id.delete_contact_button);
+            nameTextView = view.findViewById(R.id.phone_contact_name_text);
+            phoneTextView = view.findViewById(R.id.phone_contact_phone_text);
         }
     }
 
@@ -43,6 +48,7 @@ public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdap
      * by RecyclerView.
      */
     public PhoneContactsAdapter(List<PhoneContact> dataSet) {
+        Log.i("LOCATION", "d:" + dataSet);
         localDataSet = dataSet;
     }
 
@@ -53,6 +59,7 @@ public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdap
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.contact_list_item, viewGroup, false);
 
+        prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
         return new ViewHolder(view);
     }
 
@@ -62,18 +69,46 @@ public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdap
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.getTextView().setText(localDataSet.get(position).getPhone());
+        viewHolder.nameTextView.setText(localDataSet.get(position).getName());
+        viewHolder.phoneTextView.setText(localDataSet.get(position).getPhone());
+        viewHolder.deleteContactButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                PhoneContact removeItem = localDataSet.get(position);
+                // remove your item from data base
+                localDataSet.remove(position);  // remove the item from list
+                notifyItemRemoved(position); // notify the adapter about the removed item
+                UpdateSharedPreferences();
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return localDataSet.size();
+        if (localDataSet != null)
+        {
+            return localDataSet.size();
+        }
+        return 0;
     }
 
     public void AddPhoneContact(PhoneContact contact)
     {
         localDataSet.add(contact);
         notifyDataSetChanged();
+        //UpdateSharedPreferences();
     }
+
+    public void UpdateSharedPreferences()
+    {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("PHONE_CONTACT_LIST", new Gson().toJson(localDataSet));
+        editor.commit();
+    }
+
+    public List<PhoneContact> GetPhoneContacts()
+    {
+        return localDataSet;
+    }
+
 }
