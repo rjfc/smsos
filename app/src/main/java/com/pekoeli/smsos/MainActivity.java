@@ -1,20 +1,14 @@
 package com.pekoeli.smsos;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import android.Manifest;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.ToggleButton;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,22 +16,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        ToggleButton toggleListener = findViewById(R.id.toggle_listener_button);
-        toggleListener.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                //startService(new Intent(this, SMSOSService.class));
-                Intent serviceIntent = new Intent(this, SMSOSService.class);
-                serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
-                ContextCompat.startForegroundService(this, serviceIntent);
-            } else {
-                // The toggle is disabled
-                //stopService(new Intent(this, SMSOSService.class));
-                Intent serviceIntent = new Intent(this, SMSOSService.class);
-                stopService(serviceIntent);
-            }
-        });
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_home, R.id.navigation_contacts, R.id.navigation_settings)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(navView, navController);
+        getSupportActionBar().hide();
     }
-}
 
+}
