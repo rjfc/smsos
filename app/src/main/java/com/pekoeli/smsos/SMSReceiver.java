@@ -3,9 +3,11 @@ package com.pekoeli.smsos;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -18,13 +20,18 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class SMSReceiver extends BroadcastReceiver {
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
     private String senderPhoneNumber;
+    private String PHONE_CONTACT_LIST = "PHONE_CONTACT_LIST";
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -44,6 +51,7 @@ public class SMSReceiver extends BroadcastReceiver {
     };
 
     public void onReceive(Context context, Intent intent) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Bundle myBundle = intent.getExtras();
         SmsMessage[] messages = null;
         String strMessage = "";
@@ -56,7 +64,22 @@ public class SMSReceiver extends BroadcastReceiver {
                 //
                 messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
                 senderPhoneNumber = messages[i].getOriginatingAddress();
-                if (messages[i].getMessageBody().equals("Location")) {
+                List<PhoneContact> defaultPhoneContacts = new ArrayList<PhoneContact>();
+                ArrayList<String> phoneContacts = new ArrayList<String>();
+                boolean isInWhitelist = true;
+                if (prefs.contains(PHONE_CONTACT_LIST) && !prefs.getString(PHONE_CONTACT_LIST, "").equals(""))
+                {
+                    isInWhitelist = false;
+                    defaultPhoneContacts = new Gson().fromJson(prefs.getString(PHONE_CONTACT_LIST, ""), new TypeToken<ArrayList<PhoneContact>>(){}.getType());
+                    for (int j = 0; j < defaultPhoneContacts.size(); j++) {
+                        if (senderPhoneNumber.replaceAll("[^\\p{IsDigit}]", "").equals(defaultPhoneContacts.get(j).getPhone().replaceAll("[^\\p{IsDigit}]", "")))
+                        {
+                            isInWhitelist = true;
+                        }
+                    }
+
+                }
+                if (isInWhitelist && messages[i].getMessageBody().equals("Location")) {
 
                     locationRequest = new LocationRequest();
                     locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);

@@ -22,6 +22,7 @@ import androidx.core.app.NotificationCompat;
 public class SMSOSService extends Service {
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
     private SMSReceiver smsReceiver;
+    private ScreenOnOffReceiver screenOnOffReceiver;
 
     private LocationManager mLocationManager;
 
@@ -45,6 +46,24 @@ public class SMSOSService extends Service {
         Toast.makeText(this, "Service Created", Toast.LENGTH_LONG).show();
 
         smsReceiver = new SMSReceiver();
+
+      /*  IntentFilter intentFilter = new IntentFilter();
+
+        // Add network connectivity change action.
+        intentFilter.addAction("android.intent.action.SCREEN_ON");
+        intentFilter.addAction("android.intent.action.SCREEN_OFF");
+
+        // Set broadcast receiver priority.
+        intentFilter.setPriority(100);
+
+        // Create a network change broadcast receiver.
+        screenOnOffReceiver = new ScreenOnOffReceiver();
+
+        // Register the broadcast receiver with the intent filter object.
+        registerReceiver(screenOnOffReceiver, intentFilter);
+
+        Log.d(ScreenOnOffReceiver.SCREEN_TOGGLE_TAG, "Service onCreate: screenOnOffReceiver is registered.");*/
+
     }
 
     @Override
@@ -75,6 +94,12 @@ public class SMSOSService extends Service {
     public void onDestroy() {
         super.onDestroy();
         this.unregisterReceiver(smsReceiver);
+        // Unregister screenOnOffReceiver when destroy.
+        /*if(screenOnOffReceiver!=null)
+        {
+            unregisterReceiver(screenOnOffReceiver);
+            Log.d(ScreenOnOffReceiver.SCREEN_TOGGLE_TAG, "onDestroy: screenOnOffReceiver is unregistered.");
+        }*/
         Toast.makeText(this, "Service Stopped", Toast.LENGTH_LONG).show();
     }
 
