@@ -24,16 +24,6 @@ public class SMSOSService extends Service {
     private SMSReceiver smsReceiver;
     private ScreenOnOffReceiver screenOnOffReceiver;
 
-    private LocationManager mLocationManager;
-
-    private final LocationListener mLocationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(@NonNull Location location) {
-            Log.i("LOCATION", String.valueOf(location.getLongitude()) + String.valueOf(location.getLatitude()));
-        }
-
-    };
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

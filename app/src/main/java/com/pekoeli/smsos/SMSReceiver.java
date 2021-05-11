@@ -29,9 +29,12 @@ import java.util.List;
 
 public class SMSReceiver extends BroadcastReceiver {
     private FusedLocationProviderClient fusedLocationClient;
+    private FusedLocationProviderClient fusedLocationClientStream;
     private LocationRequest locationRequest;
+    private LocationRequest locationRequestStream;
     private String senderPhoneNumber;
     private String PHONE_CONTACT_LIST = "PHONE_CONTACT_LIST";
+    private List<String> trackingPhoneNumbers = new ArrayList<>();
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -46,6 +49,27 @@ public class SMSReceiver extends BroadcastReceiver {
                 textMessage += "\nGoogle Maps Link: " + "http://maps.google.com/maps?f=q&q=" + latitude + "," + longitude;
                 textMessage += "\nTime: " + Calendar.getInstance().getTime();
                 smsManager.sendTextMessage(senderPhoneNumber, null, textMessage, null, null);
+            }
+        }
+    };
+
+
+    private LocationCallback locationCallbackStream = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            for (Location location : locationResult.getLocations()) {
+                String latitude = String.valueOf(location.getLatitude());
+                String longitude = String.valueOf(location.getLongitude());
+                Log.i("LOCATION", latitude + " | " + longitude);
+                SmsManager smsManager = SmsManager.getDefault();
+                String textMessage = "NAME's Location";
+                textMessage += "\n----------------------------";
+                textMessage += "\nGoogle Maps Link: " + "http://maps.google.com/maps?f=q&q=" + latitude + "," + longitude;
+                textMessage += "\nTime: " + Calendar.getInstance().getTime();
+                for (int i = 0; i < trackingPhoneNumbers.size(); i++)
+                {
+                    smsManager.sendTextMessage(trackingPhoneNumbers.get(i), null, textMessage, null, null);
+                }
             }
         }
     };
@@ -79,7 +103,7 @@ public class SMSReceiver extends BroadcastReceiver {
                     }
 
                 }
-                if (isInWhitelist && messages[i].getMessageBody().equals("Location")) {
+                if (isInWhitelist && messages[i].getMessageBody().trim().toLowerCase().equals("location")) {
 
                     locationRequest = new LocationRequest();
                     locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -97,7 +121,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         // for ActivityCompat#requestPermissions for more details.
                         return;
                     }
-                    fusedLocationClient =LocationServices.getFusedLocationProviderClient(context);
+                    fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
                     fusedLocationClient.requestLocationUpdates
                             (
                                     locationRequest,
@@ -106,6 +130,56 @@ public class SMSReceiver extends BroadcastReceiver {
                             );
                     Log.i("LOCATION", "LOCATION");
                     Toast.makeText(context, "LOCATION WAS ASKED FOR", Toast.LENGTH_SHORT).show();
+                }
+                else if (messages[i].getMessageBody().trim().toLowerCase().equals("location track"))
+                {
+                    String trimmedPhoneNumber = senderPhoneNumber.replaceAll("[^\\p{IsDigit}]", "");
+                    if (trackingPhoneNumbers.contains(trimmedPhoneNumber))
+                    {
+                        trackingPhoneNumbers.remove(trimmedPhoneNumber);
+                    }
+                    else
+                    {
+                        trackingPhoneNumbers.add(trimmedPhoneNumber);
+                    }
+                    if (trackingPhoneNumbers.size() == 1)
+                    {
+                        locationRequestStream = new LocationRequest();
+                        // TODO: settings:
+                        // TODO: for stream interval
+                        // TODO: disable whitelist
+                        // TODO: name
+                        locationRequestStream.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                        locationRequestStream.setInterval(1000);
+                        locationRequestStream.setFastestInterval(1000);
+                        locationRequestStream.setSmallestDisplacement(1);
+                        //mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, mLocationListener);
+                        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+                        fusedLocationClientStream = LocationServices.getFusedLocationProviderClient(context);
+                        fusedLocationClientStream.requestLocationUpdates
+                                (
+                                        locationRequestStream,
+                                        locationCallbackStream,
+                                        null
+                                );
+                        Log.i("LOCATION", "LOCATION");
+                        Toast.makeText(context, "LOCATION WAS ASKED FOR", Toast.LENGTH_SHORT).show();
+                    }
+                    else if (trackingPhoneNumbers.size() == 0)
+                    {
+                        Log.i("LOCATION", "Stopped");
+                        fusedLocationClientStream.removeLocationUpdates(locationCallbackStream);
+
+                    }
                 }
             }
         }
