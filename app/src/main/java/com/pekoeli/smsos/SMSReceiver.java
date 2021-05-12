@@ -91,12 +91,12 @@ public class SMSReceiver extends BroadcastReceiver {
                 List<PhoneContact> defaultPhoneContacts = new ArrayList<PhoneContact>();
                 ArrayList<String> phoneContacts = new ArrayList<String>();
                 boolean isInWhitelist = true;
-                if (prefs.contains(PHONE_CONTACT_LIST) && !prefs.getString(PHONE_CONTACT_LIST, "").equals(""))
+                if (prefs.contains(PHONE_CONTACT_LIST) && !prefs.getString(PHONE_CONTACT_LIST, "").equals("[]"))
                 {
                     isInWhitelist = false;
                     defaultPhoneContacts = new Gson().fromJson(prefs.getString(PHONE_CONTACT_LIST, ""), new TypeToken<ArrayList<PhoneContact>>(){}.getType());
                     for (int j = 0; j < defaultPhoneContacts.size(); j++) {
-                        if (senderPhoneNumber.replaceAll("[^\\p{IsDigit}]", "").equals(defaultPhoneContacts.get(j).getPhone().replaceAll("[^\\p{IsDigit}]", "")))
+                        if (senderPhoneNumber.replaceAll("^+1", "").replaceAll("[^\\p{IsDigit}]", "").equals(defaultPhoneContacts.get(j).getPhone().replaceAll("^+1", "").replaceAll("[^\\p{IsDigit}]", "")))
                         {
                             isInWhitelist = true;
                         }
@@ -128,10 +128,9 @@ public class SMSReceiver extends BroadcastReceiver {
                                     locationCallback,
                                     null
                             );
-                    Log.i("LOCATION", "LOCATION");
                     Toast.makeText(context, "LOCATION WAS ASKED FOR", Toast.LENGTH_SHORT).show();
                 }
-                else if (messages[i].getMessageBody().trim().toLowerCase().equals("location track"))
+                else if (isInWhitelist && messages[i].getMessageBody().trim().toLowerCase().equals("location track"))
                 {
                     String trimmedPhoneNumber = senderPhoneNumber.replaceAll("[^\\p{IsDigit}]", "");
                     if (trackingPhoneNumbers.contains(trimmedPhoneNumber))
