@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
+    <TextView
+        android:id="@+id/settings_header2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Home"
+        android:textColor="#202020"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ToggleButton
         android:id="@+id/toggle_listener_button"
         android:layout_width="0dp"
@@ -19,11 +31,12 @@
         android:background="@color/purple_200"
         android:checked="false"
         android:text="ToggleButton"
-        android:textOff="SMSOS is Off"
-        android:textOn="SMSOS is On"
+        android:textOff="Location Tracking is OFF"
+        android:textOn="Location Tracking is ON"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/settings_header2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

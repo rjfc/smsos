@@ -34,6 +34,7 @@ public class SMSReceiver extends BroadcastReceiver {
     private LocationRequest locationRequestStream;
     private String senderPhoneNumber;
     private String PHONE_CONTACT_LIST = "PHONE_CONTACT_LIST";
+    private String NAME_SETTING = "UNNAMED";
     private List<String> trackingPhoneNumbers = new ArrayList<>();
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
@@ -44,7 +45,7 @@ public class SMSReceiver extends BroadcastReceiver {
                 Log.i("LOCATION", latitude + " | " + longitude);
                 fusedLocationClient.removeLocationUpdates(locationCallback);
                 SmsManager smsManager = SmsManager.getDefault();
-                String textMessage = "NAME's Location";
+                String textMessage = NAME_SETTING + "'s Location";
                 textMessage += "\n----------------------------";
                 textMessage += "\nGoogle Maps Link: " + "http://maps.google.com/maps?f=q&q=" + latitude + "," + longitude;
                 textMessage += "\nTime: " + Calendar.getInstance().getTime();
@@ -62,7 +63,7 @@ public class SMSReceiver extends BroadcastReceiver {
                 String longitude = String.valueOf(location.getLongitude());
                 Log.i("LOCATION", latitude + " | " + longitude);
                 SmsManager smsManager = SmsManager.getDefault();
-                String textMessage = "NAME's Location";
+                String textMessage = NAME_SETTING + "'s Location";
                 textMessage += "\n----------------------------";
                 textMessage += "\nGoogle Maps Link: " + "http://maps.google.com/maps?f=q&q=" + latitude + "," + longitude;
                 textMessage += "\nTime: " + Calendar.getInstance().getTime();
@@ -79,7 +80,10 @@ public class SMSReceiver extends BroadcastReceiver {
         Bundle myBundle = intent.getExtras();
         SmsMessage[] messages = null;
         String strMessage = "";
-
+        String commandPrefix = prefs.getString("COMMAND_PREFIX", "location");
+        boolean needsToBeContact = prefs.getBoolean("NEEDS_TO_BE_CONTACT", true);
+        NAME_SETTING = prefs.getString("NAME", "UNNAMED");
+        Log.i("LOCATION", commandPrefix + " | " + senderPhoneNumber + " | " + needsToBeContact);
         if (myBundle != null) {
             Object[] pdus = (Object[]) myBundle.get("pdus");
             messages = new SmsMessage[pdus.length];
@@ -91,7 +95,7 @@ public class SMSReceiver extends BroadcastReceiver {
                 List<PhoneContact> defaultPhoneContacts = new ArrayList<PhoneContact>();
                 ArrayList<String> phoneContacts = new ArrayList<String>();
                 boolean isInWhitelist = true;
-                if (prefs.contains(PHONE_CONTACT_LIST) && !prefs.getString(PHONE_CONTACT_LIST, "").equals("[]"))
+                if (prefs.contains(PHONE_CONTACT_LIST) && !prefs.getString(PHONE_CONTACT_LIST, "").equals("[]") && needsToBeContact)
                 {
                     isInWhitelist = false;
                     defaultPhoneContacts = new Gson().fromJson(prefs.getString(PHONE_CONTACT_LIST, ""), new TypeToken<ArrayList<PhoneContact>>(){}.getType());
@@ -103,7 +107,7 @@ public class SMSReceiver extends BroadcastReceiver {
                     }
 
                 }
-                if (isInWhitelist && messages[i].getMessageBody().trim().toLowerCase().equals("location")) {
+                if (isInWhitelist && messages[i].getMessageBody().trim().toLowerCase().equals(commandPrefix)) {
 
                     locationRequest = new LocationRequest();
                     locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -130,7 +134,7 @@ public class SMSReceiver extends BroadcastReceiver {
                             );
                     Toast.makeText(context, "LOCATION WAS ASKED FOR", Toast.LENGTH_SHORT).show();
                 }
-                else if (isInWhitelist && messages[i].getMessageBody().trim().toLowerCase().equals("location track"))
+                else if (isInWhitelist && messages[i].getMessageBody().trim().toLowerCase().equals(commandPrefix + " track"))
                 {
                     String trimmedPhoneNumber = senderPhoneNumber.replaceAll("[^\\p{IsDigit}]", "");
                     if (trackingPhoneNumbers.contains(trimmedPhoneNumber))
@@ -148,9 +152,10 @@ public class SMSReceiver extends BroadcastReceiver {
                         // TODO: for stream interval
                         // TODO: disable whitelist
                         // TODO: name
+                        // TODO: command prefix for location
                         locationRequestStream.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                        locationRequestStream.setInterval(30000);
-                        locationRequestStream.setFastestInterval(30000);
+                        locationRequestStream.setInterval(prefs.getInt("TRACKING_INTERVAL", 30) * 1000);
+                        locationRequestStream.setFastestInterval(prefs.getInt("TRACKING_INTERVAL", 30) * 1000);
                         locationRequestStream.setSmallestDisplacement(1);
                         //mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, mLocationListener);
                         if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

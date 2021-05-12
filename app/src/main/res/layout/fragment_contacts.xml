@@ -33,12 +33,24 @@
                 android:textSize="24sp" />
         </androidx.cardview.widget.CardView>
     </LinearLayout>-->
+    <TextView
+        android:id="@+id/Contacts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Contacts"
+        android:textColor="#202020"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/phone_contact_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/add_name_edit_text"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/Contacts">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -76,9 +88,9 @@
     <Button
         android:id="@+id/add_phone_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:text="Add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/phone_contact_list" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -85,6 +85,5 @@ public class ContactsFragment extends Fragment {
                 editor.commit();
             }
         });
-
     }
 }
