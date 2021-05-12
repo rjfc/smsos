@@ -1,7 +1,10 @@
 package com.pekoeli.smsos.ui.home;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.pekoeli.smsos.R;
 import com.pekoeli.smsos.SMSOSService;
+
+import static androidx.core.content.ContextCompat.getSystemService;
 
 public class HomeFragment extends Fragment {
 
@@ -34,6 +39,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         ToggleButton toggleListener = getView().findViewById(R.id.toggle_listener_button);
+        toggleListener.setChecked(isMyServiceRunning(SMSOSService.class));
         toggleListener.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Intent serviceIntent = new Intent(getContext(), SMSOSService.class);
             if (isChecked) {
@@ -46,5 +52,14 @@ public class HomeFragment extends Fragment {
                 getContext().stopService(serviceIntent);
             }
         });
+    }
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

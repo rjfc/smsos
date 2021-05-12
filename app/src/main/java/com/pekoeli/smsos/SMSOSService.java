@@ -19,6 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import java.util.ArrayList;
+
 public class SMSOSService extends Service {
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
     private SMSReceiver smsReceiver;
@@ -83,6 +85,7 @@ public class SMSOSService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        smsReceiver.SetTrackingPhoneNumbers(new ArrayList<>());
         this.unregisterReceiver(smsReceiver);
         // Unregister screenOnOffReceiver when destroy.
         /*if(screenOnOffReceiver!=null)

@@ -150,8 +150,8 @@ public class SMSReceiver extends BroadcastReceiver {
                         // TODO: disable whitelist
                         // TODO: name
                         locationRequestStream.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                        locationRequestStream.setInterval(1000);
-                        locationRequestStream.setFastestInterval(1000);
+                        locationRequestStream.setInterval(30000);
+                        locationRequestStream.setFastestInterval(30000);
                         locationRequestStream.setSmallestDisplacement(1);
                         //mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, mLocationListener);
                         if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -183,5 +183,10 @@ public class SMSReceiver extends BroadcastReceiver {
                 }
             }
         }
+    }
+
+    public void SetTrackingPhoneNumbers(List<String> newList)
+    {
+        trackingPhoneNumbers = newList;
     }
 }
