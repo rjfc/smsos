@@ -39,17 +39,28 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         ToggleButton toggleListener = getView().findViewById(R.id.toggle_listener_button);
+        TextView serviceStatusText = getView().findViewById(R.id.service_status_text);
         toggleListener.setChecked(isMyServiceRunning(SMSOSService.class));
+        if (isMyServiceRunning(SMSOSService.class))
+        {
+            serviceStatusText.setText(getResources().getText(R.string.service_active_text));
+        }
+        else
+        {
+            serviceStatusText.setText(getResources().getText(R.string.service_inactive_text));
+        }
         toggleListener.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Intent serviceIntent = new Intent(getContext(), SMSOSService.class);
             if (isChecked) {
                 //startService(new Intent(this, SMSOSService.class));
-                serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
+                serviceIntent.putExtra("inputExtra", "Your location can be requested");
                 ContextCompat.startForegroundService(getContext(), serviceIntent);
+                serviceStatusText.setText(getResources().getText(R.string.service_active_text));
             } else {
                 // The toggle is disabled
                 //stopService(new Intent(this, SMSOSService.class));
                 getContext().stopService(serviceIntent);
+                serviceStatusText.setText(getResources().getText(R.string.service_inactive_text));
             }
         });
     }

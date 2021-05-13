@@ -6,4 +6,6 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="service_inactive_text">The location tracker is currently <b>OFF</b>.</string>
+    <string name="service_active_text">The location tracker is currently <b>ON</b>.</string>
 </resources>

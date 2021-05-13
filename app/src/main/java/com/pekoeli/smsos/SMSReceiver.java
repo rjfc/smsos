@@ -39,18 +39,18 @@ public class SMSReceiver extends BroadcastReceiver {
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            for (Location location : locationResult.getLocations()) {
-                String latitude = String.valueOf(location.getLatitude());
-                String longitude = String.valueOf(location.getLongitude());
-                Log.i("LOCATION", latitude + " | " + longitude);
-                fusedLocationClient.removeLocationUpdates(locationCallback);
-                SmsManager smsManager = SmsManager.getDefault();
-                String textMessage = NAME_SETTING + "'s Location";
-                textMessage += "\n----------------------------";
-                textMessage += "\nGoogle Maps Link: " + "http://maps.google.com/maps?f=q&q=" + latitude + "," + longitude;
-                textMessage += "\nTime: " + Calendar.getInstance().getTime();
-                smsManager.sendTextMessage(senderPhoneNumber, null, textMessage, null, null);
-            }
+        for (Location location : locationResult.getLocations()) {
+            String latitude = String.valueOf(location.getLatitude());
+            String longitude = String.valueOf(location.getLongitude());
+            Log.i("LOCATION", latitude + " | " + longitude);
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+            SmsManager smsManager = SmsManager.getDefault();
+            String textMessage = NAME_SETTING + "'s Location";
+            textMessage += "\n----------------------------";
+            textMessage += "\nGoogle Maps Link: " + "http://maps.google.com/maps?f=q&q=" + latitude + "," + longitude;
+            textMessage += "\nTime: " + Calendar.getInstance().getTime();
+            smsManager.sendTextMessage(senderPhoneNumber, null, textMessage, null, null);
+        }
         }
     };
 
@@ -132,7 +132,7 @@ public class SMSReceiver extends BroadcastReceiver {
                                     locationCallback,
                                     null
                             );
-                    Toast.makeText(context, "LOCATION WAS ASKED FOR", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "LOCATION WAS ASKED FOR", Toast.LENGTH_SHORT).show();
                 }
                 else if (isInWhitelist && messages[i].getMessageBody().trim().toLowerCase().equals(commandPrefix + " track"))
                 {
@@ -176,7 +176,7 @@ public class SMSReceiver extends BroadcastReceiver {
                                         null
                                 );
                         Log.i("LOCATION", "LOCATION");
-                        Toast.makeText(context, "LOCATION WAS ASKED FOR", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "LOCATION WAS ASKED FOR", Toast.LENGTH_SHORT).show();
                     }
                     else if (trackingPhoneNumbers.size() == 0)
                     {

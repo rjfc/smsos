@@ -3,10 +3,12 @@ package com.pekoeli.smsos.ui;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -16,6 +18,7 @@ import com.google.gson.Gson;
 import com.pekoeli.smsos.PhoneContact;
 import com.pekoeli.smsos.R;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdapter.ViewHolder> {
@@ -31,6 +34,7 @@ public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdap
         private final ImageButton deleteContactButton;
         private final TextView nameTextView;
         private final TextView phoneTextView;
+        private final Button sendInstructionsIndividualButton;
 
         public ViewHolder(View view) {
             super(view);
@@ -38,6 +42,7 @@ public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdap
             deleteContactButton = view.findViewById(R.id.delete_contact_button);
             nameTextView = view.findViewById(R.id.phone_contact_name_text);
             phoneTextView = view.findViewById(R.id.phone_contact_phone_text);
+            sendInstructionsIndividualButton = view.findViewById(R.id.send_instructions_individual_button);
         }
     }
 
@@ -78,6 +83,19 @@ public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdap
                 localDataSet.remove(position);  // remove the item from list
                 notifyItemRemoved(position); // notify the adapter about the removed item
                 UpdateSharedPreferences();
+            }
+        });
+        viewHolder.sendInstructionsIndividualButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                viewHolder.sendInstructionsIndividualButton.setEnabled(false);
+                viewHolder.sendInstructionsIndividualButton.setText("Instructions Sent");
+                SmsManager smsManager = SmsManager.getDefault();
+                String textMessage = localDataSet.get(position).getName() + ", " + prefs.getString("NAME", "") + " has added you to their contact list for location tracking. If they have the tracker enabled, you can use the following commands:";
+
+                smsManager.sendTextMessage(localDataSet.get(position).getPhone(), null, textMessage, null, null);
+                textMessage = "\"Location\" - Get " + prefs.getString("NAME", "") + "'s current location";
+                textMessage += "\n\"Location track\" - Track/disable tracking of " + prefs.getString("NAME", "") + "'s location at " + String.valueOf(prefs.getInt("TRACKING_INTERVAL", 30)) + " second intervals";
+                smsManager.sendTextMessage(localDataSet.get(position).getPhone(), null, textMessage, null, null);
             }
         });
     }

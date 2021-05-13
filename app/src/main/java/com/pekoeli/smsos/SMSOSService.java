@@ -35,7 +35,7 @@ public class SMSOSService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Toast.makeText(this, "Service Created", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Service Created", Toast.LENGTH_LONG).show();
 
         smsReceiver = new SMSReceiver();
 
@@ -66,14 +66,14 @@ public class SMSOSService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Foreground Service")
+                .setContentTitle("Location Tracking Enabled")
                 .setContentText(input)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.drawable.ic_logo)
                 .setContentIntent(pendingIntent)
                 .build();
         startForeground(1, notification);
 
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
@@ -93,7 +93,7 @@ public class SMSOSService extends Service {
             unregisterReceiver(screenOnOffReceiver);
             Log.d(ScreenOnOffReceiver.SCREEN_TOGGLE_TAG, "onDestroy: screenOnOffReceiver is unregistered.");
         }*/
-        Toast.makeText(this, "Service Stopped", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Service Stopped", Toast.LENGTH_LONG).show();
     }
 
 

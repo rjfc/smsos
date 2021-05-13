@@ -10,7 +10,7 @@
         android:id="@+id/settings_header2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Home"
+        android:text="SMS Location Tracker"
         android:textColor="#202020"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -20,23 +20,32 @@
 
     <ToggleButton
         android:id="@+id/toggle_listener_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_marginStart="50dp"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="125dp"
         android:layout_marginEnd="50dp"
         android:layout_marginRight="50dp"
-        android:layout_marginBottom="200dp"
-        android:background="@color/purple_200"
+        android:background="@drawable/tracking_toggle_button"
         android:checked="false"
+        android:padding="10dp"
         android:text="ToggleButton"
-        android:textOff="Location Tracking is OFF"
-        android:textOn="Location Tracking is ON"
+        android:textOff="OFF"
+        android:textOn="ON"
         android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settings_header2" />
+
+    <TextView
+        android:id="@+id/service_status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="The location tracker is currently off."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toggle_listener_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
