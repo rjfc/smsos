@@ -83,7 +83,6 @@ public class SMSReceiver extends BroadcastReceiver {
         String commandPrefix = prefs.getString("COMMAND_PREFIX", "location");
         boolean needsToBeContact = prefs.getBoolean("NEEDS_TO_BE_CONTACT", true);
         NAME_SETTING = prefs.getString("NAME", "UNNAMED");
-        Log.i("LOCATION", commandPrefix + " | " + senderPhoneNumber + " | " + needsToBeContact);
         if (myBundle != null) {
             Object[] pdus = (Object[]) myBundle.get("pdus");
             messages = new SmsMessage[pdus.length];
@@ -92,6 +91,7 @@ public class SMSReceiver extends BroadcastReceiver {
                 //
                 messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
                 senderPhoneNumber = messages[i].getOriginatingAddress();
+                Log.i("LOCATION", commandPrefix + " | " + senderPhoneNumber + " | " + needsToBeContact);
                 List<PhoneContact> defaultPhoneContacts = new ArrayList<PhoneContact>();
                 ArrayList<String> phoneContacts = new ArrayList<String>();
                 boolean isInWhitelist = true;
@@ -100,7 +100,7 @@ public class SMSReceiver extends BroadcastReceiver {
                     isInWhitelist = false;
                     defaultPhoneContacts = new Gson().fromJson(prefs.getString(PHONE_CONTACT_LIST, ""), new TypeToken<ArrayList<PhoneContact>>(){}.getType());
                     for (int j = 0; j < defaultPhoneContacts.size(); j++) {
-                        if (senderPhoneNumber.replaceAll("^+1", "").replaceAll("[^\\p{IsDigit}]", "").equals(defaultPhoneContacts.get(j).getPhone().replaceAll("^+1", "").replaceAll("[^\\p{IsDigit}]", "")))
+                        if (senderPhoneNumber.replaceAll("^+1", "").replaceAll("[^\\p{Digit}]", "").equals(defaultPhoneContacts.get(j).getPhone().replaceAll("^+1", "").replaceAll("[^\\p{Digit}]", "")))
                         {
                             isInWhitelist = true;
                         }
