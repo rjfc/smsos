@@ -23,7 +23,7 @@ import java.util.List;
 
 public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdapter.ViewHolder> {
 
-    private List<PhoneContact> localDataSet;
+    private List<PhoneContact> phoneContactsList;
     private SharedPreferences prefs;
 
     /**
@@ -38,7 +38,6 @@ public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdap
 
         public ViewHolder(View view) {
             super(view);
-            // Define click listener for the ViewHolder's View
             deleteContactButton = view.findViewById(R.id.delete_contact_button);
             nameTextView = view.findViewById(R.id.phone_contact_name_text);
             phoneTextView = view.findViewById(R.id.phone_contact_phone_text);
@@ -53,14 +52,10 @@ public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdap
      * by RecyclerView.
      */
     public PhoneContactsAdapter(List<PhoneContact> dataSet) {
-        Log.i("LOCATION", "d:" + dataSet);
-        localDataSet = dataSet;
+         phoneContactsList = dataSet;
     }
-
-    // Create new views (invoked by the layout manager)
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        // Create a new view, which defines the UI of the list item
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.contact_list_item, viewGroup, false);
 
@@ -68,65 +63,54 @@ public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdap
         return new ViewHolder(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-
-        // Get element from your dataset at this position and replace the
-        // contents of the view with that element
-        viewHolder.nameTextView.setText(localDataSet.get(position).getName());
-        viewHolder.phoneTextView.setText(localDataSet.get(position).getPhone());
-        viewHolder.deleteContactButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                PhoneContact removeItem = localDataSet.get(position);
-                // remove your item from data base
-                localDataSet.remove(position);  // remove the item from list
-                notifyItemRemoved(position); // notify the adapter about the removed item
-                UpdateSharedPreferences();
-            }
+        viewHolder.nameTextView.setText(phoneContactsList.get(position).getName());
+        viewHolder.phoneTextView.setText(phoneContactsList.get(position).getPhone());
+        viewHolder.deleteContactButton.setOnClickListener(v -> {
+            PhoneContact removeItem = phoneContactsList.get(position);
+            phoneContactsList.remove(position);
+            notifyItemRemoved(position);
+            UpdateSharedPreferences();
         });
-        viewHolder.sendInstructionsIndividualButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                viewHolder.sendInstructionsIndividualButton.setEnabled(false);
-                viewHolder.sendInstructionsIndividualButton.setText("Instructions Sent");
-                SmsManager smsManager = SmsManager.getDefault();
-                String textMessage = localDataSet.get(position).getName() + ", " + prefs.getString("NAME", "") + " has added you to their contact list for location tracking. If they have the tracker enabled, you can use the following commands:";
+        viewHolder.sendInstructionsIndividualButton.setOnClickListener(v -> {
+            viewHolder.sendInstructionsIndividualButton.setEnabled(false);
+            viewHolder.sendInstructionsIndividualButton.setText("Instructions Sent");
+            SmsManager smsManager = SmsManager.getDefault();
+            String textMessage = phoneContactsList.get(position).getName() + ", " + prefs.getString("NAME", "") + " has added you to their contact list for location tracking. If they have the tracker enabled, you can use the following commands:";
 
-                smsManager.sendTextMessage(localDataSet.get(position).getPhone(), null, textMessage, null, null);
-                textMessage = "\"Location\" - Get " + prefs.getString("NAME", "") + "'s current location";
-                textMessage += "\n\"Location track\" - Track/disable tracking of " + prefs.getString("NAME", "") + "'s location at " + String.valueOf(prefs.getInt("TRACKING_INTERVAL", 30)) + " second intervals";
-                smsManager.sendTextMessage(localDataSet.get(position).getPhone(), null, textMessage, null, null);
-            }
+            smsManager.sendTextMessage(phoneContactsList.get(position).getPhone(), null, textMessage, null, null);
+            textMessage = "\"Location\" - Get " + prefs.getString("NAME", "") + "'s current location";
+            textMessage += "\n\"Location track\" - Track/disable tracking of " + prefs.getString("NAME", "") + "'s location at " + String.valueOf(prefs.getInt("TRACKING_INTERVAL", 30)) + " second intervals";
+            smsManager.sendTextMessage(phoneContactsList.get(position).getPhone(), null, textMessage, null, null);
         });
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        if (localDataSet != null)
+        if (phoneContactsList != null)
         {
-            return localDataSet.size();
+            return phoneContactsList.size();
         }
         return 0;
     }
 
     public void AddPhoneContact(PhoneContact contact)
     {
-        localDataSet.add(contact);
+        phoneContactsList.add(contact);
         notifyDataSetChanged();
-        //UpdateSharedPreferences();
     }
 
     public void UpdateSharedPreferences()
     {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("PHONE_CONTACT_LIST", new Gson().toJson(localDataSet));
+        editor.putString("PHONE_CONTACT_LIST", new Gson().toJson(phoneContactsList));
         editor.commit();
     }
 
     public List<PhoneContact> GetPhoneContacts()
     {
-        return localDataSet;
+        return phoneContactsList;
     }
 
 }

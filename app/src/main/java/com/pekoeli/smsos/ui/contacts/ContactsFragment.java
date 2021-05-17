@@ -70,15 +70,7 @@ public class ContactsFragment extends Fragment {
 
         addPhoneButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                /*SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-                SharedPreferences.Editor editor = prefs.edit();
-                Set<String> stringSet = prefs.getStringSet(PHONE_CONTACT_LIST, new HashSet<>(Arrays.asList(new String[]{})));
-                stringSet.add(addPhoneEditText.getText().toString());
-                editor.putStringSet(PHONE_CONTACT_LIST, stringSet);
-                editor.commit();
-                Log.i("LOCATION", prefs.getStringSet(PHONE_CONTACT_LIST, new HashSet<>(Arrays.asList(new String[]{}))).toString());*/
                 adapter.AddPhoneContact(new PhoneContact(addNameEditText.getText().toString(), addPhoneEditText.getText().toString()));
-
 
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("PHONE_CONTACT_LIST", new Gson().toJson(adapter.GetPhoneContacts()));

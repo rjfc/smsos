@@ -24,7 +24,6 @@ import java.util.ArrayList;
 public class SMSOSService extends Service {
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
     private SMSReceiver smsReceiver;
-    private ScreenOnOffReceiver screenOnOffReceiver;
 
     @Nullable
     @Override
@@ -35,27 +34,8 @@ public class SMSOSService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        //Toast.makeText(this, "Service Created", Toast.LENGTH_LONG).show();
 
         smsReceiver = new SMSReceiver();
-
-      /*  IntentFilter intentFilter = new IntentFilter();
-
-        // Add network connectivity change action.
-        intentFilter.addAction("android.intent.action.SCREEN_ON");
-        intentFilter.addAction("android.intent.action.SCREEN_OFF");
-
-        // Set broadcast receiver priority.
-        intentFilter.setPriority(100);
-
-        // Create a network change broadcast receiver.
-        screenOnOffReceiver = new ScreenOnOffReceiver();
-
-        // Register the broadcast receiver with the intent filter object.
-        registerReceiver(screenOnOffReceiver, intentFilter);
-
-        Log.d(ScreenOnOffReceiver.SCREEN_TOGGLE_TAG, "Service onCreate: screenOnOffReceiver is registered.");*/
-
     }
 
     @Override
@@ -73,8 +53,6 @@ public class SMSOSService extends Service {
                 .build();
         startForeground(1, notification);
 
-        //Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
-
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
         this.registerReceiver( smsReceiver, intentFilter);
@@ -87,13 +65,6 @@ public class SMSOSService extends Service {
         super.onDestroy();
         smsReceiver.SetTrackingPhoneNumbers(new ArrayList<>());
         this.unregisterReceiver(smsReceiver);
-        // Unregister screenOnOffReceiver when destroy.
-        /*if(screenOnOffReceiver!=null)
-        {
-            unregisterReceiver(screenOnOffReceiver);
-            Log.d(ScreenOnOffReceiver.SCREEN_TOGGLE_TAG, "onDestroy: screenOnOffReceiver is unregistered.");
-        }*/
-        //Toast.makeText(this, "Service Stopped", Toast.LENGTH_LONG).show();
     }
 
 

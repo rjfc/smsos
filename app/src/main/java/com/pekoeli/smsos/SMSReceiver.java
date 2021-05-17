@@ -42,7 +42,6 @@ public class SMSReceiver extends BroadcastReceiver {
         for (Location location : locationResult.getLocations()) {
             String latitude = String.valueOf(location.getLatitude());
             String longitude = String.valueOf(location.getLongitude());
-            Log.i("LOCATION", latitude + " | " + longitude);
             fusedLocationClient.removeLocationUpdates(locationCallback);
             SmsManager smsManager = SmsManager.getDefault();
             String textMessage = NAME_SETTING + "'s Location";
@@ -61,8 +60,7 @@ public class SMSReceiver extends BroadcastReceiver {
             for (Location location : locationResult.getLocations()) {
                 String latitude = String.valueOf(location.getLatitude());
                 String longitude = String.valueOf(location.getLongitude());
-                Log.i("LOCATION", latitude + " | " + longitude);
-                SmsManager smsManager = SmsManager.getDefault();
+                 SmsManager smsManager = SmsManager.getDefault();
                 String textMessage = NAME_SETTING + "'s Location";
                 textMessage += "\n----------------------------";
                 textMessage += "\nGoogle Maps Link: " + "http://maps.google.com/maps?f=q&q=" + latitude + "," + longitude;
@@ -79,7 +77,6 @@ public class SMSReceiver extends BroadcastReceiver {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Bundle myBundle = intent.getExtras();
         SmsMessage[] messages = null;
-        String strMessage = "";
         String commandPrefix = prefs.getString("COMMAND_PREFIX", "location");
         boolean needsToBeContact = prefs.getBoolean("NEEDS_TO_BE_CONTACT", true);
         NAME_SETTING = prefs.getString("NAME", "UNNAMED");
@@ -91,9 +88,7 @@ public class SMSReceiver extends BroadcastReceiver {
                 //
                 messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
                 senderPhoneNumber = messages[i].getOriginatingAddress();
-                Log.i("LOCATION", commandPrefix + " | " + senderPhoneNumber + " | " + needsToBeContact);
-                List<PhoneContact> defaultPhoneContacts = new ArrayList<PhoneContact>();
-                ArrayList<String> phoneContacts = new ArrayList<String>();
+             List<PhoneContact> defaultPhoneContacts;
                 boolean isInWhitelist = true;
                 if (prefs.contains(PHONE_CONTACT_LIST) && !prefs.getString(PHONE_CONTACT_LIST, "").equals("[]") && needsToBeContact)
                 {
@@ -132,11 +127,10 @@ public class SMSReceiver extends BroadcastReceiver {
                                     locationCallback,
                                     null
                             );
-                    //Toast.makeText(context, "LOCATION WAS ASKED FOR", Toast.LENGTH_SHORT).show();
                 }
                 else if (isInWhitelist && messages[i].getMessageBody().trim().toLowerCase().equals(commandPrefix + " track"))
                 {
-                    String trimmedPhoneNumber = senderPhoneNumber.replaceAll("[^\\p{IsDigit}]", "");
+                    String trimmedPhoneNumber = senderPhoneNumber.replaceAll("[^\\p{Digit}]", "");
                     if (trackingPhoneNumbers.contains(trimmedPhoneNumber))
                     {
                         trackingPhoneNumbers.remove(trimmedPhoneNumber);
@@ -175,13 +169,10 @@ public class SMSReceiver extends BroadcastReceiver {
                                         locationCallbackStream,
                                         null
                                 );
-                        Log.i("LOCATION", "LOCATION");
-                        //Toast.makeText(context, "LOCATION WAS ASKED FOR", Toast.LENGTH_SHORT).show();
                     }
                     else if (trackingPhoneNumbers.size() == 0)
                     {
-                        Log.i("LOCATION", "Stopped");
-                        fusedLocationClientStream.removeLocationUpdates(locationCallbackStream);
+                       fusedLocationClientStream.removeLocationUpdates(locationCallbackStream);
 
                     }
                 }
