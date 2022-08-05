@@ -67,7 +67,6 @@ public class SMSOSService extends Service {
         this.unregisterReceiver(smsReceiver);
     }
 
-
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
@@ -79,6 +78,4 @@ public class SMSOSService extends Service {
             manager.createNotificationChannel(serviceChannel);
         }
     }
-
-
 }

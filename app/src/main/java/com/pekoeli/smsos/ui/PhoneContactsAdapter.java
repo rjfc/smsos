@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -26,15 +27,12 @@ public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdap
     private List<PhoneContact> phoneContactsList;
     private SharedPreferences prefs;
 
-    /**
-     * Provide a reference to the type of views that you are using
-     * (custom ViewHolder).
-     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ImageButton deleteContactButton;
         private final TextView nameTextView;
         private final TextView phoneTextView;
         private final Button sendInstructionsIndividualButton;
+        private final CheckBox emergencyContactCheckbox;
 
         public ViewHolder(View view) {
             super(view);
@@ -42,15 +40,10 @@ public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdap
             nameTextView = view.findViewById(R.id.phone_contact_name_text);
             phoneTextView = view.findViewById(R.id.phone_contact_phone_text);
             sendInstructionsIndividualButton = view.findViewById(R.id.send_instructions_individual_button);
+            emergencyContactCheckbox = view.findViewById(R.id.emergency_contact_checkbox);
         }
     }
 
-    /**
-     * Initialize the dataset of the Adapter.
-     *
-     * @param dataSet String[] containing the data to populate views to be used
-     * by RecyclerView.
-     */
     public PhoneContactsAdapter(List<PhoneContact> dataSet) {
          phoneContactsList = dataSet;
     }
@@ -67,12 +60,18 @@ public class PhoneContactsAdapter extends RecyclerView.Adapter<PhoneContactsAdap
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         viewHolder.nameTextView.setText(phoneContactsList.get(position).getName());
         viewHolder.phoneTextView.setText(phoneContactsList.get(position).getPhone());
+        viewHolder.emergencyContactCheckbox.setChecked(phoneContactsList.get(position).isEmergencyContact());
         viewHolder.deleteContactButton.setOnClickListener(v -> {
             PhoneContact removeItem = phoneContactsList.get(position);
             phoneContactsList.remove(position);
             notifyItemRemoved(position);
             UpdateSharedPreferences();
         });
+        viewHolder.emergencyContactCheckbox.setOnClickListener(v -> {
+            phoneContactsList.get(position).toggleIsEmergencyContact();
+            UpdateSharedPreferences();
+        });
+        // Send instructions to a contact
         viewHolder.sendInstructionsIndividualButton.setOnClickListener(v -> {
             viewHolder.sendInstructionsIndividualButton.setEnabled(false);
             viewHolder.sendInstructionsIndividualButton.setText("Instructions Sent");

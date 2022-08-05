@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -36,9 +37,9 @@ import java.util.List;
 import java.util.Set;
 
 public class ContactsFragment extends Fragment {
-
+    private List<PhoneContact> defaultPhoneContacts;
     private ContactsViewModel dashboardViewModel;
-    private String PHONE_CONTACT_LIST = "PHONE_CONTACT_LIST";
+    public static String PHONE_CONTACT_LIST = "PHONE_CONTACT_LIST";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -56,7 +57,7 @@ public class ContactsFragment extends Fragment {
         EditText addNameEditText = getView().findViewById(R.id.add_name_edit_text);
         EditText addPhoneEditText = getView().findViewById(R.id.add_phone_edit_text);
         RecyclerView rvContactList = getView().findViewById(R.id.phone_contact_list);
-        List<PhoneContact> defaultPhoneContacts = new ArrayList<PhoneContact>();
+        defaultPhoneContacts = new ArrayList<PhoneContact>();
         if (prefs.contains(PHONE_CONTACT_LIST) && !prefs.getString(PHONE_CONTACT_LIST, "").equals(""))
         {
             defaultPhoneContacts = new Gson().fromJson(prefs.getString(PHONE_CONTACT_LIST, ""), new TypeToken<ArrayList<PhoneContact>>(){}.getType());

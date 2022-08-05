@@ -18,34 +18,87 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ToggleButton
-        android:id="@+id/toggle_listener_button"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="125dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginRight="50dp"
-        android:background="@drawable/tracking_toggle_button"
-        android:checked="false"
-        android:padding="10dp"
-        android:text="ToggleButton"
-        android:textOff="OFF"
-        android:textOn="ON"
-        android:textSize="30sp"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/send_location_button"
+
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="124dp"
+        android:background="@drawable/send_location_button"
+        android:text="Send Location"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settings_header2" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/emergency_button"
+
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:background="@drawable/emergency_button"
+        android:text="Emergency"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/send_location_button" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/creepy_person_button"
+
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/creepy_person_button"
+        android:padding="20dp"
+        android:text="Creepy Person"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/emergency_button"
+        app:layout_constraintStart_toEndOf="@+id/scary_place_button"
+        app:layout_constraintTop_toBottomOf="@+id/send_location_button" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/scary_place_button"
+
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/scary_place_button"
+        android:padding="20dp"
+        android:text="Scary Place"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/send_location_button" />
 
     <TextView
         android:id="@+id/service_status_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
         android:text="The location tracker is currently off."
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toggle_listener_button" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Switch
+        android:id="@+id/toggle_listener_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tracking"
+        app:layout_constraintBottom_toTopOf="@+id/service_status_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
